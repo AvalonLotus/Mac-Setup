@@ -113,10 +113,11 @@ ok "baseline tools done"
 # Add new repos here. Format per row: <repo_url>|<local_path>|<setup_cmd>
 # setup_cmd is run from the repo's root directory. Empty = no setup.
 REPOS="
-https://github.com/AvalonLotus/Global-Finance-News.git|$HOME/Global-Finance-News|bash scripts/install-git-autosync.sh
-https://github.com/AvalonLotus/AvalonLotus-Vault.git|$HOME/AvalonLotus-Obsidian|./setup.sh
-https://github.com/AvalonLotus/AvalonLotus-Skills.git|$HOME/AvalonLotus-Skills|
+https://github.com/AvalonLotus/AvalonLotus.git|$HOME/AvalonLotus|
 https://github.com/AvalonLotus/AvalonLotus.com.git|$HOME/AvalonLotus.com|
+https://github.com/AvalonLotus/Global-Finance-News.git|$HOME/Projects/Global-Finance-News|bash scripts/install-git-autosync.sh
+https://github.com/AvalonLotus/AvalonLotus-Vault.git|$HOME/Obsidian|./setup.sh
+https://github.com/AvalonLotus/AvalonLotus-Skills.git|$HOME/Skills|
 "
 
 # ─── Process each repo ────────────────────────────────────────────────
@@ -139,6 +140,7 @@ echo "$REPOS" | while IFS='|' read -r url path setup; do
     ok "pulled"
   else
     dim "cloning into $path"
+    mkdir -p "$(dirname "$path")"
     if ! git clone --quiet "$url" "$path" 2>&1; then
       fail "$name: clone failed"
       continue
