@@ -47,6 +47,39 @@ ok "git $(git --version | awk '{print $3}')"
 command -v jq  >/dev/null 2>&1 || brew install jq
 ok "jq $(jq --version)"
 
+# ─── Baseline apps & CLI tools (idempotent — brew skips if already present) ───
+# Pinned to AvalonLotus's daily-driver set. Each line = either a brew formula
+# (CLI tool) or a cask (.app in /Applications). To remove an item, just
+# delete its line; brew install is no-op if the cask/formula is already there.
+log "Installing baseline tools (CLI + macOS apps)"
+
+# CLI formulae — small, fast, mostly invisible
+FORMULAE="gh mas"
+for tool in $FORMULAE; do
+  if brew list "$tool" >/dev/null 2>&1; then
+    dim "  ✓ $tool (formula) already installed"
+  else
+    log "  brew install $tool"
+    brew install "$tool" 2>&1 | tail -3 || warn "    $tool install failed (continue)"
+  fi
+done
+
+# GUI apps via cask
+# GFN essentials:  docker, 1password, 1password-cli
+# Daily drivers:   google-chrome, visual-studio-code, obsidian, claude
+# Specialised:     obs, utm, codex
+CASKS="docker 1password 1password-cli google-chrome visual-studio-code obsidian claude obs utm codex"
+for cask in $CASKS; do
+  if brew list --cask "$cask" >/dev/null 2>&1; then
+    dim "  ✓ $cask (cask) already installed"
+  else
+    log "  brew install --cask $cask"
+    brew install --cask "$cask" 2>&1 | tail -3 || warn "    $cask install failed (continue)"
+  fi
+done
+
+ok "baseline tools done"
+
 # ─── Repo manifest ────────────────────────────────────────────────────
 # Add new repos here. Format per row: <repo_url>|<local_path>|<setup_cmd>
 # setup_cmd is run from the repo's root directory. Empty = no setup.

@@ -26,6 +26,21 @@ Takes ~5-10 minutes on a fresh Mac (most time is Homebrew install).
 
 Prereqs (auto-installed if missing): Homebrew, git, jq.
 
+
+
+## Baseline tools (auto-installed via Homebrew)
+
+Installed before any repos are cloned, idempotent (skipped if already present):
+
+**CLI formulae:** `gh`, `mas`
+
+**GUI apps (casks):**
+- GFN essentials: `docker`, `1password`, `1password-cli`
+- Daily drivers: `google-chrome`, `visual-studio-code`, `obsidian`, `claude`
+- Specialised: `obs`, `utm`, `codex`
+
+To add/remove items, edit the `FORMULAE` / `CASKS` variables in `install.sh`.
+
 ## Adding a new repo
 
 Edit the `REPOS` block at the top of `install.sh`:
