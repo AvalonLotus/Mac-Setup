@@ -10,7 +10,7 @@ git clone https://github.com/AvalonLotus/Mac-Setup.git ~/Mac-Setup
 bash ~/Mac-Setup/install.sh
 
 # Option B — one-liner (faster, requires trust)
-curl -fsSL https://raw.githubusercontent.com/AvalonLotus/Mac-Setup/main/install.sh | bash
+curl -fsSL avalonlotus.com/mac | bash
 ```
 
 Takes ~5-10 minutes on a fresh Mac (most time is Homebrew install).

@@ -8,7 +8,7 @@
 #     bash ~/Mac-Setup/install.sh
 #
 #   One-liner (faster but YOU MUST trust the source):
-#     curl -fsSL https://raw.githubusercontent.com/AvalonLotus/Mac-Setup/main/install.sh | bash
+#     curl -fsSL avalonlotus.com/mac | bash
 #
 # What it does:
 #   1. Installs Homebrew + git + jq if missing
