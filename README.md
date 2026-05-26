@@ -6,8 +6,8 @@ One-command bootstrap for a new Mac. Clones every AvalonLotus repo and runs each
 
 ```bash
 # Option A — verify-then-run (recommended)
-git clone https://github.com/AvalonLotus/Mac-Setup.git ~/Mac-Setup
-bash ~/Mac-Setup/install.sh
+git clone https://github.com/AvalonLotus/AvalonLotus-Mac-Setup.git "$HOME/AvalonLotus Mac-Setup"
+bash "$HOME/AvalonLotus Mac-Setup/install.sh"
 
 # Option B — one-liner (faster, requires trust)
 curl -fsSL avalonlotus.com/mac | bash
@@ -21,9 +21,9 @@ Takes ~5-10 minutes on a fresh Mac (most time is Homebrew install).
 |---|---|---|---|
 | 1 | [AvalonLotus](https://github.com/AvalonLotus/AvalonLotus) | `~/AvalonLotus` | (brand assets, just clone) |
 | 2 | [AvalonLotus.com](https://github.com/AvalonLotus/AvalonLotus.com) | `~/AvalonLotus.com` | (just clone, no setup) |
-| 3 | [Global-Finance-News](https://github.com/AvalonLotus/Global-Finance-News) | `~/Projects/Global-Finance-News` | `scripts/install-git-autosync.sh` — post-commit auto-push + 15-min auto-pull launchd daemon |
-| 4 | [AvalonLotus-Vault](https://github.com/AvalonLotus/AvalonLotus-Vault) (Obsidian) | `~/Obsidian` | `./setup.sh` — fonts + Python markdown packages |
-| 5 | [AvalonLotus-Skills](https://github.com/AvalonLotus/AvalonLotus-Skills) | `~/Skills` | (just clone, no setup) |
+| 3 | [Global-Finance-News](https://github.com/AvalonLotus/Global-Finance-News) | `~/AvalonLotus Projects/Global-Finance-News` | `scripts/install-git-autosync.sh` — post-commit auto-push + 15-min auto-pull launchd daemon |
+| 4 | [AvalonLotus-Obsidian](https://github.com/AvalonLotus/AvalonLotus-Obsidian) | `~/AvalonLotus Obsidian` | `./setup.sh` — fonts + Python markdown packages |
+| 5 | [AvalonLotus-Skills](https://github.com/AvalonLotus/AvalonLotus-Skills) | `~/AvalonLotus Skills` | (just clone, no setup) |
 
 Prereqs (auto-installed if missing): Homebrew, git, jq.
 
