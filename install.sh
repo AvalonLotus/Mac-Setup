@@ -53,6 +53,29 @@ ok "jq $(jq --version)"
 # delete its line; brew install is no-op if the cask/formula is already there.
 log "Installing baseline tools (CLI + macOS apps)"
 
+# Hang-detection wrapper. macOS doesn't ship GNU `timeout` so we DIY with a
+# subshell + sleep watchdog. If brew install hangs >5min on a single package
+# (slow network, stuck on EULA prompt, sudo password expected, etc) the
+# watchdog kills it instead of blocking the whole bootstrap for hours.
+# 2026-05-26: added after Mac 2 install.sh sat zombie for hours on docker cask.
+HANG_LIMIT=300  # seconds — generous enough for big downloads like Docker/OBS
+run_with_timeout() {
+  local label="$1"; shift
+  local start=$(date +%s)
+  ("$@" 2>&1 | tail -3) &
+  local pid=$!
+  (sleep "$HANG_LIMIT" && kill -0 "$pid" 2>/dev/null && {
+    warn "    $label exceeded ${HANG_LIMIT}s — killing, continuing"
+    kill -9 "$pid" 2>/dev/null
+    pkill -9 -P "$pid" 2>/dev/null
+  }) &
+  local watchdog=$!
+  wait "$pid" 2>/dev/null
+  local rc=$?
+  kill "$watchdog" 2>/dev/null
+  return $rc
+}
+
 # CLI formulae — small, fast, mostly invisible
 FORMULAE="gh mas"
 for tool in $FORMULAE; do
@@ -60,7 +83,7 @@ for tool in $FORMULAE; do
     dim "  ✓ $tool (formula) already installed"
   else
     log "  brew install $tool"
-    brew install "$tool" 2>&1 | tail -3 || warn "    $tool install failed (continue)"
+    run_with_timeout "$tool" brew install "$tool" || warn "    $tool install failed (continue)"
   fi
 done
 
@@ -72,9 +95,15 @@ CASKS="docker 1password 1password-cli google-chrome visual-studio-code obsidian 
 for cask in $CASKS; do
   if brew list --cask "$cask" >/dev/null 2>&1; then
     dim "  ✓ $cask (cask) already installed"
+  elif [ "$cask" = "docker" ] && [ -d "/Applications/Docker.app" ]; then
+    dim "  ✓ docker.app exists (non-brew install — skipping)"
+  elif [ "$cask" = "obsidian" ] && [ -d "/Applications/Obsidian.app" ]; then
+    dim "  ✓ obsidian.app exists (non-brew install — skipping)"
+  elif [ "$cask" = "claude" ] && [ -d "/Applications/Claude.app" ]; then
+    dim "  ✓ claude.app exists (non-brew install — skipping)"
   else
     log "  brew install --cask $cask"
-    brew install --cask "$cask" 2>&1 | tail -3 || warn "    $cask install failed (continue)"
+    run_with_timeout "$cask" brew install --cask "$cask" || warn "    $cask install failed (continue)"
   fi
 done
 
