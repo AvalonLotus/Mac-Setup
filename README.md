@@ -1,0 +1,48 @@
+# AvalonLotus Mac Setup
+
+One-command bootstrap for a new Mac. Clones every AvalonLotus repo and runs each one's setup script.
+
+## Quick start (new Mac)
+
+```bash
+# Option A — verify-then-run (recommended)
+git clone https://github.com/AvalonLotus/Mac-Setup.git ~/Mac-Setup
+bash ~/Mac-Setup/install.sh
+
+# Option B — one-liner (faster, requires trust)
+curl -fsSL https://raw.githubusercontent.com/AvalonLotus/Mac-Setup/main/install.sh | bash
+```
+
+Takes ~5-10 minutes on a fresh Mac (most time is Homebrew install).
+
+## What it installs
+
+| # | Repo | Setup |
+|---|---|---|
+| 1 | [Global-Finance-News](https://github.com/AvalonLotus/Global-Finance-News) | `scripts/install-git-autosync.sh` — post-commit auto-push + 15-min auto-pull launchd daemon |
+| 2 | [AvalonLotus-Vault](https://github.com/AvalonLotus/AvalonLotus-Vault) (Obsidian) | `./setup.sh` — fonts + Python markdown packages |
+| 3 | [AvalonLotus-Skills](https://github.com/AvalonLotus/AvalonLotus-Skills) | (just clone, no setup) |
+| 4 | [AvalonLotus.com](https://github.com/AvalonLotus/AvalonLotus.com) | (just clone, no setup) |
+
+Prereqs (auto-installed if missing): Homebrew, git, jq.
+
+## Adding a new repo
+
+Edit the `REPOS` block at the top of `install.sh`:
+
+```
+<repo_url>|<local_path>|<setup_cmd>
+```
+
+Commit + push. Next time you (or another machine) runs `install.sh`, the new repo gets included.
+
+## Idempotent
+
+Safe to re-run anytime. Pulls latest of each repo, re-runs setup. Useful as a "sync everything" command.
+
+## Why not Ansible / Nix / chezmoi
+
+Three reasons:
+1. **Zero-prereq bootstrapping** — a fresh Mac has bash + git. Anything else needs to be installed first, which defeats the "one command" goal.
+2. **Personal scale** — ~4 repos, ~2 machines. The complexity overhead of a real config manager isn't worth it.
+3. **Each repo owns its own setup** — `install-git-autosync.sh`, `setup.sh`, etc. live in their respective repos. This file just calls them. Easy to maintain.
