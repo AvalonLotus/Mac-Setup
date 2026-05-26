@@ -4,8 +4,8 @@
 #
 # Usage:
 #   Recommended (verify-then-run):
-#     git clone https://github.com/AvalonLotus/Mac-Setup.git ~/Mac-Setup
-#     bash ~/Mac-Setup/install.sh
+#     git clone https://github.com/AvalonLotus/AvalonLotus-Mac-Setup.git "$HOME/AvalonLotus Mac-Setup"
+#     bash "$HOME/AvalonLotus Mac-Setup/install.sh"
 #
 #   One-liner (faster but YOU MUST trust the source):
 #     curl -fsSL avalonlotus.com/mac | bash
@@ -115,9 +115,9 @@ ok "baseline tools done"
 REPOS="
 https://github.com/AvalonLotus/AvalonLotus.git|$HOME/AvalonLotus|
 https://github.com/AvalonLotus/AvalonLotus.com.git|$HOME/AvalonLotus.com|
-https://github.com/AvalonLotus/Global-Finance-News.git|$HOME/Projects/Global-Finance-News|bash scripts/install-git-autosync.sh
-https://github.com/AvalonLotus/AvalonLotus-Vault.git|$HOME/Obsidian|./setup.sh
-https://github.com/AvalonLotus/AvalonLotus-Skills.git|$HOME/Skills|
+https://github.com/AvalonLotus/Global-Finance-News.git|$HOME/AvalonLotus Projects/Global-Finance-News|bash scripts/install-git-autosync.sh
+https://github.com/AvalonLotus/AvalonLotus-Obsidian.git|$HOME/AvalonLotus Obsidian|./setup.sh
+https://github.com/AvalonLotus/AvalonLotus-Skills.git|$HOME/AvalonLotus Skills|
 "
 
 # ─── Process each repo ────────────────────────────────────────────────
