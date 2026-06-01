@@ -116,6 +116,11 @@ Log "Installing baseline tools (CLI + Windows apps)"
 #   gh  -> GitHub.cli
 #   mas -> NO Windows equivalent (Mac App Store only) — skipped
 Install-WingetPkg -Id 'GitHub.cli' -Label 'gh' -Check 'gh'
+# Developer runtimes GFN's preflight expects (node for helper scripts/tests,
+# python for reporting). Added 2026-06 after a clean Windows install surfaced
+# that the Mac already had these from prior tooling, so they were never listed.
+Install-WingetPkg -Id 'OpenJS.NodeJS.LTS' -Label 'node'   -Check 'node'
+Install-WingetPkg -Id 'Python.Python.3.12' -Label 'python' -Check 'python'
 Warn "mas (Mac App Store CLI) has no Windows equivalent — skipped"
 
 # GUI apps (Mac casks -> winget IDs)

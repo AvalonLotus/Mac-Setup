@@ -77,7 +77,9 @@ run_with_timeout() {
 }
 
 # CLI formulae — small, fast, mostly invisible
-FORMULAE="gh mas"
+# node + python: developer runtimes GFN's preflight expects. Added 2026-06 for
+# parity with install.ps1 — a clean machine needs them; brew skips if present.
+FORMULAE="gh mas node python"
 for tool in $FORMULAE; do
   if brew list "$tool" >/dev/null 2>&1; then
     dim "  ✓ $tool (formula) already installed"
