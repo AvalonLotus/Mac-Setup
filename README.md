@@ -36,7 +36,7 @@ Installed before any repos are cloned, idempotent (skipped if already present):
 **CLI formulae:** `gh`, `mas`
 
 **GUI apps (casks):**
-- GFN essentials: `docker`, `1password`, `1password-cli`
+- GFN essentials: `docker`
 - Daily drivers: `google-chrome`, `visual-studio-code`, `obsidian`, `claude`
 - Specialised: `obs`, `utm`, `codex`
 

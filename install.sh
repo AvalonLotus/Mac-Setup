@@ -88,10 +88,10 @@ for tool in $FORMULAE; do
 done
 
 # GUI apps via cask
-# GFN essentials:  docker, 1password, 1password-cli
+# GFN essentials:  docker
 # Daily drivers:   google-chrome, visual-studio-code, obsidian, claude
 # Specialised:     obs, utm, codex
-CASKS="docker 1password 1password-cli google-chrome visual-studio-code obsidian claude obs utm codex"
+CASKS="docker google-chrome visual-studio-code obsidian claude obs utm codex"
 for cask in $CASKS; do
   if brew list --cask "$cask" >/dev/null 2>&1; then
     dim "  ✓ $cask (cask) already installed"
