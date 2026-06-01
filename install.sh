@@ -115,7 +115,7 @@ ok "baseline tools done"
 REPOS="
 https://github.com/AvalonLotus/AvalonLotus.git|$HOME/AvalonLotus|
 https://github.com/AvalonLotus/AvalonLotus.com.git|$HOME/AvalonLotus.com|
-https://github.com/AvalonLotus/Global-Finance-News.git|$HOME/AvalonLotus Projects/Global-Finance-News|bash scripts/install-git-autosync.sh
+https://github.com/AvalonLotus/Global-Finance-News.git|$HOME/AvalonLotus Projects/Global Finance News|bash scripts/install-git-autosync.sh
 https://github.com/AvalonLotus/AvalonLotus-Obsidian.git|$HOME/AvalonLotus Obsidian|./setup.sh
 https://github.com/AvalonLotus/AvalonLotus-Skills.git|$HOME/AvalonLotus Skills|
 "
