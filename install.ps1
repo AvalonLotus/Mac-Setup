@@ -151,7 +151,7 @@ Ok "baseline tools done"
 $ROOT = 'D:\AvalonLotus International Pty., Ltd'
 $Repos = @(
     @{ Url = 'https://github.com/AvalonLotus/AvalonLotus.com.git';      Path = "$ROOT\AvalonLotus - Website - 官方網站";                Setup = $null }
-    @{ Url = 'https://github.com/AvalonLotus/Global-Finance-News.git';  Path = "$ROOT\AvalonLotus - Global Finance News - 全球財經新聞"; Setup = {
+    @{ Url = 'https://github.com/AvalonLotus/Global-Finance-News.git';  Path = "$ROOT\AvalonLotus Projects\AvalonLotus - Global Finance News - 全球財經新聞"; Setup = {
             # Mac used a launchd daemon (install-git-autosync.sh). On Windows the
             # equivalent is a Scheduled Task. If the repo ships a .ps1, prefer it.
             if (Test-Path 'scripts\install-git-autosync.ps1') {
