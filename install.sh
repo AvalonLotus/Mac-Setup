@@ -115,6 +115,39 @@ done
 
 ok "baseline tools done"
 
+# ─── Login auto-sync agent ────────────────────────────────────────────
+# Installs com.avalonlotus.login-sync: at every login it pulls THIS repo and,
+# only if it changed, re-runs install.sh so new tools/skills/setups land
+# automatically. (Other repos' content is pulled by com.avalonlotus.git-autopull;
+# this agent re-applies the bootstrap when the bootstrap itself changes.)
+# Idempotent — re-running install.sh just refreshes the agent.
+log "Installing login auto-sync LaunchAgent"
+LOGIN_SCRIPT="$HOME/AvalonLotus Mac-Setup/login-sync.sh"
+LOGIN_PLIST="$HOME/Library/LaunchAgents/com.avalonlotus.login-sync.plist"
+LOGIN_LOG_DIR="$HOME/.local/state/git-autosync"
+mkdir -p "$LOGIN_LOG_DIR" "$HOME/Library/LaunchAgents"
+chmod +x "$LOGIN_SCRIPT" 2>/dev/null || true
+cat > "$LOGIN_PLIST" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.avalonlotus.login-sync</string>
+  <key>ProgramArguments</key><array>
+    <string>/bin/sh</string><string>$LOGIN_SCRIPT</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>$LOGIN_LOG_DIR/login-sync.log</string>
+  <key>StandardErrorPath</key><string>$LOGIN_LOG_DIR/login-sync.log</string>
+</dict></plist>
+PLIST
+_uid=$(id -u)
+launchctl bootout "gui/$_uid" "$LOGIN_PLIST" 2>/dev/null || true
+if launchctl bootstrap "gui/$_uid" "$LOGIN_PLIST" 2>/dev/null; then
+  ok "login-sync agent loaded (runs at every login)"
+else
+  warn "login-sync bootstrap failed (will load at next login)"
+fi
+
 # ─── Repo manifest ────────────────────────────────────────────────────
 # Add new repos here. Format per row: <repo_url>|<local_path>|<setup_cmd>
 # setup_cmd is run from the repo's root directory. Empty = no setup.

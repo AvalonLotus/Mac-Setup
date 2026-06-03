@@ -152,6 +152,20 @@ Warn "codex — no confirmed winget package; install manually if needed (skipped
 
 Ok "baseline tools done"
 
+# ─── Login auto-sync (Scheduled Task) ─────────────────────────────────
+# Registers AvalonLotus-LoginSync: at logon, pulls this repo and, only if it
+# changed, re-runs install.ps1. Windows analog of the macOS login-sync
+# LaunchAgent. Idempotent — -Force overwrites the task if it already exists.
+Log "Registering login auto-sync Scheduled Task"
+try {
+    $syncScript = Join-Path $PSScriptRoot 'login-sync.ps1'
+    $action  = New-ScheduledTaskAction -Execute 'powershell.exe' `
+                 -Argument "-ExecutionPolicy Bypass -WindowStyle Hidden -File `"$syncScript`""
+    $trigger = New-ScheduledTaskTrigger -AtLogOn
+    Register-ScheduledTask -TaskName 'AvalonLotus-LoginSync' -Action $action -Trigger $trigger -Force | Out-Null
+    Ok "login-sync Scheduled Task registered (runs at logon)"
+} catch { Warn "login-sync task registration failed (run PowerShell as admin if needed): $_" }
+
 # ─── Repo manifest ────────────────────────────────────────────────────
 # Format per row: @{ Url=...; Path=...; Setup=... }
 # Setup is a scriptblock run from the repo root. $null = no setup.
