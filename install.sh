@@ -79,7 +79,11 @@ run_with_timeout() {
 # CLI formulae — small, fast, mostly invisible
 # node + python: developer runtimes GFN's preflight expects. Added 2026-06 for
 # parity with install.ps1 — a clean machine needs them; brew skips if present.
-FORMULAE="gh mas node python"
+# yt-dlp + ffmpeg + tesseract (+tesseract-lang): YouTube frame-analysis pipeline
+# (download video/subs, scene-cut frame extraction, OCR of on-screen text).
+# tesseract-lang is ~685MB but carries chi_tra (Traditional Chinese) required for
+# CJK on-screen text. Added 2026-06.
+FORMULAE="gh mas node python yt-dlp ffmpeg tesseract tesseract-lang"
 for tool in $FORMULAE; do
   if brew list "$tool" >/dev/null 2>&1; then
     dim "  ✓ $tool (formula) already installed"
@@ -115,11 +119,10 @@ ok "baseline tools done"
 # Add new repos here. Format per row: <repo_url>|<local_path>|<setup_cmd>
 # setup_cmd is run from the repo's root directory. Empty = no setup.
 REPOS="
-https://github.com/AvalonLotus/AvalonLotus.git|$HOME/AvalonLotus|
 https://github.com/AvalonLotus/AvalonLotus.com.git|$HOME/AvalonLotus.com|
 https://github.com/AvalonLotus/Global-Finance-News.git|$HOME/AvalonLotus Projects/Global Finance News|bash scripts/install-git-autosync.sh
 https://github.com/AvalonLotus/AvalonLotus-Obsidian.git|$HOME/AvalonLotus Obsidian|./setup.sh
-https://github.com/AvalonLotus/AvalonLotus-Skills.git|$HOME/AvalonLotus Skills|
+https://github.com/AvalonLotus/AvalonLotus-Skills.git|$HOME/AvalonLotus Skills|./install.sh
 "
 
 # ─── Process each repo ────────────────────────────────────────────────

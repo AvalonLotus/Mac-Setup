@@ -121,6 +121,17 @@ Install-WingetPkg -Id 'GitHub.cli' -Label 'gh' -Check 'gh'
 # that the Mac already had these from prior tooling, so they were never listed.
 Install-WingetPkg -Id 'OpenJS.NodeJS.LTS' -Label 'node'   -Check 'node'
 Install-WingetPkg -Id 'Python.Python.3.12' -Label 'python' -Check 'python'
+# Media / OCR pipeline (Mac: yt-dlp ffmpeg tesseract tesseract-lang). Powers the
+# YouTube frame-analysis workflow (download + scene-cut frames + OCR).
+#   yt-dlp -> yt-dlp.yt-dlp ; ffmpeg -> Gyan.FFmpeg ; tesseract -> UB-Mannheim.TesseractOCR
+Install-WingetPkg -Id 'yt-dlp.yt-dlp'            -Label 'yt-dlp'    -Check 'yt-dlp'
+Install-WingetPkg -Id 'Gyan.FFmpeg'              -Label 'ffmpeg'    -Check 'ffmpeg'
+Install-WingetPkg -Id 'UB-Mannheim.TesseractOCR' -Label 'tesseract' -Check 'tesseract'
+# Mac's tesseract-lang bundles every language incl. chi_tra. The Windows
+# UB-Mannheim build ships a default set WITHOUT Traditional Chinese — drop
+# chi_tra.traineddata (+ chi_tra_vert) into the install's tessdata\ folder
+# manually if you need CJK on-screen OCR on Windows.
+Warn "tesseract (Windows): Traditional Chinese (chi_tra) data may need manual add to tessdata\ — Mac gets it automatically via tesseract-lang"
 Warn "mas (Mac App Store CLI) has no Windows equivalent — skipped"
 
 # GUI apps (Mac casks -> winget IDs)
@@ -165,7 +176,14 @@ $Repos = @(
             if (Test-Path 'setup.ps1') { powershell -ExecutionPolicy Bypass -File 'setup.ps1' }
             else { Warn "no setup.ps1 (Mac used setup.sh for fonts + Python markdown pkgs)." }
       } }
-    @{ Url = 'https://github.com/AvalonLotus/AvalonLotus-Skills.git';   Path = "$ROOT\AvalonLotus - Skills - 技能庫";  Setup = $null }
+    @{ Url = 'https://github.com/AvalonLotus/AvalonLotus-Skills.git';   Path = "$ROOT\AvalonLotus - Skills - 技能庫";  Setup = {
+            # Mac runs the repo's install.sh to symlink each skill into
+            # ~/.claude/skills. The repo currently ships only a bash installer;
+            # if a Windows port (install.ps1) is added, prefer it. Until then,
+            # warn so skills aren't silently left unlinked on Windows.
+            if (Test-Path 'install.ps1') { powershell -ExecutionPolicy Bypass -File 'install.ps1' }
+            else { Warn "no install.ps1 in Skills repo — skills NOT linked into `$HOME\.claude\skills on Windows. Add a Windows installer or create the symlinks/junctions manually (needs Developer Mode or admin)." }
+      } }
 )
 
 # ─── Process each repo ────────────────────────────────────────────────
