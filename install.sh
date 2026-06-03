@@ -134,10 +134,17 @@ else
 fi
 
 # ─── Login auto-sync agent ────────────────────────────────────────────
-# Installs com.avalonlotus.login-sync: at every login it pulls THIS repo and,
-# only if it changed, re-runs install.sh so new tools/skills/setups land
-# automatically. (Other repos' content is pulled by com.avalonlotus.git-autopull;
-# this agent re-applies the bootstrap when the bootstrap itself changes.)
+# Installs com.avalonlotus.login-sync: at login AND every 1h it pulls THIS
+# repo and, only if it changed, re-runs install.sh so new tools/skills/setups
+# land automatically. (Other repos' content is pulled by
+# com.avalonlotus.git-autopull; this agent re-applies the bootstrap when the
+# bootstrap itself changes.)
+# The 1h StartInterval matters because a machine that is never logged out /
+# restarted would otherwise only ever fire RunAtLoad once — new bootstrap
+# tools would sit unapplied indefinitely. The timer makes propagation
+# independent of login. Cheap when idle: a no-change run is just a pull +
+# "nothing to apply" exit (lighter than git-autopull, which already pulls 5
+# repos every 15 min); install.sh only re-runs when Mac-Setup HEAD moved.
 # Idempotent — re-running install.sh just refreshes the agent.
 log "Installing login auto-sync LaunchAgent"
 LOGIN_SCRIPT="$HOME/AvalonLotus Mac-Setup/login-sync.sh"
@@ -154,6 +161,7 @@ cat > "$LOGIN_PLIST" <<PLIST
     <string>/bin/sh</string><string>$LOGIN_SCRIPT</string>
   </array>
   <key>RunAtLoad</key><true/>
+  <key>StartInterval</key><integer>3600</integer>
   <key>StandardOutPath</key><string>$LOGIN_LOG_DIR/login-sync.log</string>
   <key>StandardErrorPath</key><string>$LOGIN_LOG_DIR/login-sync.log</string>
 </dict></plist>
@@ -161,7 +169,7 @@ PLIST
 _uid=$(id -u)
 launchctl bootout "gui/$_uid" "$LOGIN_PLIST" 2>/dev/null || true
 if launchctl bootstrap "gui/$_uid" "$LOGIN_PLIST" 2>/dev/null; then
-  ok "login-sync agent loaded (runs at every login)"
+  ok "login-sync agent loaded (runs at login + every 1h)"
 else
   warn "login-sync bootstrap failed (will load at next login)"
 fi
