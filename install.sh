@@ -134,12 +134,12 @@ else
 fi
 
 # ─── Login auto-sync agent ────────────────────────────────────────────
-# Installs com.avalonlotus.login-sync: at login AND every 1h it pulls THIS
+# Installs com.avalonlotus.login-sync: at login AND every 15 min it pulls THIS
 # repo and, only if it changed, re-runs install.sh so new tools/skills/setups
 # land automatically. (Other repos' content is pulled by
 # com.avalonlotus.git-autopull; this agent re-applies the bootstrap when the
 # bootstrap itself changes.)
-# The 1h StartInterval matters because a machine that is never logged out /
+# The 15-min StartInterval matters because a machine that is never logged out /
 # restarted would otherwise only ever fire RunAtLoad once — new bootstrap
 # tools would sit unapplied indefinitely. The timer makes propagation
 # independent of login. Cheap when idle: a no-change run is just a pull +
@@ -161,7 +161,7 @@ cat > "$LOGIN_PLIST" <<PLIST
     <string>/bin/sh</string><string>$LOGIN_SCRIPT</string>
   </array>
   <key>RunAtLoad</key><true/>
-  <key>StartInterval</key><integer>3600</integer>
+  <key>StartInterval</key><integer>900</integer>
   <key>StandardOutPath</key><string>$LOGIN_LOG_DIR/login-sync.log</string>
   <key>StandardErrorPath</key><string>$LOGIN_LOG_DIR/login-sync.log</string>
 </dict></plist>
