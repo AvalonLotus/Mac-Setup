@@ -115,6 +115,24 @@ done
 
 ok "baseline tools done"
 
+# ─── Commit-signature trust (model B) ─────────────────────────────────
+# Installs the trusted-signers list so THIS machine can VERIFY that bootstrap
+# commits were signed by the admin key before login-sync runs install.sh.
+# Verification only — signing is set up solely on the admin machine. Refreshing
+# allowed_signers here is safe: login-sync only re-runs install.sh for commits
+# already trusted by the EXISTING local list, so key rotation must itself be a
+# signed (trusted) commit.
+log "Installing commit-signature trust (allowed_signers)"
+mkdir -p "$HOME/.config/git-autosync"
+if [ -f "$HOME/AvalonLotus Mac-Setup/trust/allowed_signers" ]; then
+  cp "$HOME/AvalonLotus Mac-Setup/trust/allowed_signers" "$HOME/.config/git-autosync/allowed_signers"
+  git config --global gpg.format ssh
+  git config --global gpg.ssh.allowedSignersFile "$HOME/.config/git-autosync/allowed_signers"
+  ok "allowed_signers installed; login-sync will verify bootstrap commits"
+else
+  warn "trust/allowed_signers missing — login-sync will block bootstrap until it exists"
+fi
+
 # ─── Login auto-sync agent ────────────────────────────────────────────
 # Installs com.avalonlotus.login-sync: at every login it pulls THIS repo and,
 # only if it changed, re-runs install.sh so new tools/skills/setups land

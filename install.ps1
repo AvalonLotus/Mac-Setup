@@ -152,6 +152,22 @@ Warn "codex — no confirmed winget package; install manually if needed (skipped
 
 Ok "baseline tools done"
 
+# ─── Commit-signature trust (model B) ─────────────────────────────────
+# Installs the trusted-signers list so this machine can VERIFY bootstrap commits
+# before login-sync runs install.ps1. Verification only (signing is admin-only).
+Log "Installing commit-signature trust (allowed_signers)"
+$cfgDir = Join-Path $HOME '.config\git-autosync'
+New-Item -ItemType Directory -Force -Path $cfgDir | Out-Null
+$trustSrc = Join-Path $PSScriptRoot 'trust\allowed_signers'
+if (Test-Path $trustSrc) {
+    Copy-Item $trustSrc (Join-Path $cfgDir 'allowed_signers') -Force
+    git config --global gpg.format ssh
+    git config --global gpg.ssh.allowedSignersFile ((Join-Path $cfgDir 'allowed_signers') -replace '\\','/')
+    Ok "allowed_signers installed; login-sync will verify bootstrap commits"
+} else {
+    Warn "trust\allowed_signers missing — login-sync will block bootstrap until it exists"
+}
+
 # ─── Login auto-sync (Scheduled Task) ─────────────────────────────────
 # Registers AvalonLotus-LoginSync: at logon, pulls this repo and, only if it
 # changed, re-runs install.ps1. Windows analog of the macOS login-sync

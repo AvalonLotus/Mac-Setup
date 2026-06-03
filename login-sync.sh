@@ -38,6 +38,22 @@ if [ "$before" = "$after" ]; then
   exit 0
 fi
 
-echo "[$(ts)] login-sync: updated $before -> $after, running install.sh" >> "$LOG"
+echo "[$(ts)] login-sync: updated $before -> $after, verifying signatures" >> "$LOG"
+
+# Trust gate (model B): only run install.sh if EVERY new commit is signed by a
+# trusted key listed in allowed_signers. A compromised non-admin machine can
+# push to Mac-Setup, but its commits won't verify (%G? != G), so the bootstrap
+# is NOT executed here. Fail safe: anything other than a good trusted signature
+# blocks execution.
+untrusted=$(git log --format='%H %G?' "$before..$after" 2>/dev/null | awk '$2 != "G" { print }')
+if [ -n "$untrusted" ]; then
+  echo "[$(ts)] login-sync: UNTRUSTED/unsigned commit(s) — NOT running install.sh:" >> "$LOG"
+  echo "$untrusted" | sed 's/^/    /' >> "$LOG"
+  echo "[$(ts)] login-sync: content pulled, bootstrap NOT applied. Investigate before trusting." >> "$LOG"
+  command -v osascript >/dev/null 2>&1 && osascript -e 'display notification "Untrusted Mac-Setup commit — bootstrap blocked" with title "AvalonLotus login-sync"' 2>/dev/null
+  exit 0
+fi
+
+echo "[$(ts)] login-sync: signatures trusted, running install.sh" >> "$LOG"
 bash "$REPO/install.sh" >> "$LOG" 2>&1
 echo "[$(ts)] login-sync: install.sh finished" >> "$LOG"

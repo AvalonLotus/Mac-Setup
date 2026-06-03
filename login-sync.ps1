@@ -33,6 +33,18 @@ $after  = (git rev-parse HEAD)
 
 if ($before -eq $after) { Log "up to date ($after), nothing to apply"; exit 0 }
 
-Log "updated $before -> $after, running install.ps1"
+Log "updated $before -> $after, verifying signatures"
+
+# Trust gate (model B): only run install.ps1 if every new commit is signed by a
+# trusted key in allowed_signers. Fail safe — any non-'G' status blocks it.
+$untrusted = git log --format='%H %G?' "$before..$after" | Where-Object { ($_ -split ' ')[1] -ne 'G' }
+if ($untrusted) {
+    Log "UNTRUSTED/unsigned commit(s) — NOT running install.ps1:"
+    $untrusted | ForEach-Object { Log "    $_" }
+    Log "content pulled, bootstrap NOT applied. Investigate before trusting."
+    exit 0
+}
+
+Log "signatures trusted, running install.ps1"
 powershell -ExecutionPolicy Bypass -File (Join-Path $repo 'install.ps1') *>> $log
 Log 'install.ps1 finished'
